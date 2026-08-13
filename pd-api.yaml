@@ -1,0 +1,517 @@
+openapi: 3.2.0
+info:
+  description: ''
+  version: 0.0.1
+  title: PD-HTTP-Rest-API
+  contact:
+    email: developer@helferapp.com
+servers:
+  - url: https://server.net/api/tst_modules/
+tags:
+  - name: Session
+    description: Login and user authentication lifecycle
+  - name: Patient
+    description: Patient information
+  - name: Result
+    description: Module (training/screening/test) results
+paths:
+  /ABCD/session/start:
+    post:
+      tags:
+        - Session
+      summary: >-
+        Authenticate a
+        LoginToken with the PD-API-Server and read patient infos.
+      operationId: postSessionStart
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionStartReq'
+        required: true
+      responses:
+        '200':
+          description: >-
+            Successful start of session (equivalent of login) and delivery of
+            patient information.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionStartResp'
+        '400':
+          description: LoginToken is invalid or timed out or any other error.
+#   /patient:
+#     query:
+#       tags:
+#         - Patient
+#       summary: Read infos about the patient that is logged in.
+#       operationId: queryPatient
+#       requestBody:
+#         content:
+#           application/json:
+#             schema:
+#               $ref: '#/components/schemas/SessionIdentifier'
+#         required: true
+#       responses:
+#         '200':
+#           description: Delivery of patient information.
+#           content:
+#             application/json:
+#               schema:
+#                 $ref: '#/components/schemas/PatientPayload'
+#         '400':
+#           description: SessionToken is invalid or timed out or any other error.
+#     put:
+#       tags:
+#         - Patient
+#       summary: Change infos/settings/parameters related to the patient.
+#       operationId: putPatient
+#       requestBody:
+#         content:
+#           application/json:
+#             schema:
+#               $ref: '#/components/schemas/PutPatientReq'
+#         required: true
+#       responses:
+#         '200':
+#           description: Successful change of infos/settings/parameters.
+#         '400':
+#           description: >-
+#             SessionToken is invalid or timed out or input data is invalid or any
+#             other error.
+#   /patient/lastTraining:
+#     query:
+#       tags:
+#         - Patient
+#       summary: >-
+#         Read level information about the patient that is logged, so the
+#         difficulty/level for the next training task can be decided.
+#       operationId: getPatientLastTraining
+#       requestBody:
+#         content:
+#           application/json:
+#             schema:
+#               $ref: '#/components/schemas/SessionIdentifier'
+#         required: true
+#       responses:
+#         '200':
+#           description: >-
+#             Delivery of level information. Will return -1, -1 when the patient
+#             has no results yet.
+#           content:
+#             application/json:
+#               schema:
+#                 $ref: '#/components/schemas/SimpleLevel'
+#         '400':
+#           description: SessionToken is invalid or timed out or any other error.
+  /ABCD/result/session/list:
+    query:
+      tags:
+        - Result
+      summary: Read the list of training sessions of the logged in patient.
+      operationId: queryResultSessionList
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionIdentifier'
+        required: true
+      responses:
+        '200':
+          description: Delivery of list of training sessions.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResultSessionListResp'
+        '400':
+          description: SessionToken is invalid or timed out or any other error.
+  /ABCD/result:
+    query:
+      tags:
+        - Result
+      summary: Read a module (training/screening/test) result.
+      operationId: queryResult
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryResultReq'
+        required: true
+      responses:
+        '200':
+          description: Delivery of the requested module (training/screening/test) result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResultResp'
+        '400':
+          description: >-
+            SessionToken/ResultSessionId is invalid or timed out or any
+            other error.
+    post:
+      tags:
+        - Result
+      summary: Save a module (training/screening/test) result.
+      operationId: postResult
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostResultReq'
+        required: true
+      responses:
+        '200':
+          description: Successfully saved module (training/screening/test) result.
+        '400':
+          description: >-
+            SessionToken is invalid or timed out or input data is invalid or any
+            other error.
+  /ABCD/result/latest:
+    put:
+      tags:
+        - Result
+      summary: Override the latest module (training/screening/test) result of the given ResultSessionID. If there are no results with that ResultSessionID, then start a new result list for this ResultSessionID and append the result.
+      operationId: putResultLatest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostResultReq'
+        required: true
+      responses:
+        '200':
+          description: Successfully saved/replaced module (training/screening/test) result.
+        '400':
+          description: >-
+            SessionToken is invalid or timed out or input data is invalid or any
+            other error.
+  /ABCD/continueData:
+    query:
+      tags:
+        - Continuation
+      summary: Read a continuation data.
+      operationId: queryContinueData
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionIdentifier'
+        required: true
+      responses:
+        '200':
+          description: Delivery of the requested continue data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryContinueDataResp'
+        '400':
+          description: >-
+            SessionToken/ResultSessionId is invalid or timed out or any
+            other error.
+    post:
+      tags:
+        - Continuation
+      summary: Save continuation data.
+      operationId: postContinueData
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostContinueDataReq'
+        required: true
+      responses:
+        '200':
+          description: Successfully saved continuation data.
+        '400':
+          description: >-
+            SessionToken is invalid or timed out or input data is invalid or any
+            other error.
+  /ABCD/moduleParameter:
+    query:
+      tags:
+        - Parameter
+      summary: Read a module (training/screening/test) parameter.
+      operationId: queryModuleParams
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionIdentifier'
+        required: true
+      responses:
+        '200':
+          description: Delivery of the requested (training/screening/test) parameter.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryContinueDataResp'
+        '400':
+          description: >-
+            SessionToken is invalid or timed out or any
+            other error.
+    post:
+      tags:
+        - Parameter
+      summary: Save (training/screening/test) parameter.
+      operationId: postModuleParams
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostContinueDataReq'
+        required: true
+      responses:
+        '200':
+          description: Successfully saved (training/screening/test) parameter.
+        '400':
+          description: >-
+            SessionToken is invalid or timed out or input data is invalid or any
+            other error.
+components:
+  schemas:
+    ResultSessionDescr:
+      type: object
+      required:
+        - ResultSessionId
+        - StartDt
+        - EndDt
+      properties:
+        ResultSessionId:
+          type: string
+          example: C0FEEABCEDF
+        StartDt:
+          type: string
+          example: >-
+            2025-01-27T12:41:04+2:00 (ISO8601 value including seconds and
+            timezone)
+        EndDt:
+          type: string
+          example: >-
+            2025-01-27T12:41:04+2:00 (ISO8601 value including seconds and
+            timezone)
+    SimpleLevel:
+      type: object
+      required:
+        - Level
+      properties:
+        Level:
+          type: integer
+          minumum: 0
+          example: 4
+    PatientPayload:
+      type: object
+      required:
+        - FirstName
+        - FamilyName
+        - Gender
+        - DateOfBirth
+        - DateOfInjury
+      properties:
+        FirstName:
+          type: string
+          example: Jane
+        FamilyName:
+          type: string
+          example: Doe
+        Gender:
+          type: string
+          example: female
+          enum: [male, female, diverse]
+        DateOfBirth:
+          type: string
+          example: >-
+            2025-01-27 (ISO8601 value YYYY-MM-DD)
+        DateOfInjury:
+          type: string
+          example: >-
+            2025-01-27 (ISO8601 value YYYY-MM-DD)
+        ExtrasAcl:
+          $ref: '#/components/schemas/AclDiagnosis'
+    SessionStartReq:
+      type: object
+      required:
+        - LoginToken
+        - ClientVer
+      properties:
+        LoginToken:
+          type: string
+          example: ABCDEF12345
+        ClientVer:
+          type: string
+          example: ABCD_1.2.3.4
+    SessionStartResp:
+      type: object
+      required:
+        - SessionToken
+        - ResultSessionId
+        - Patient
+      properties:
+        SessionToken:
+          type: string
+          example: XYZ9876543
+        ResultSessionId:
+          type: string
+          example: C0FEEABCEDF
+        Patient:
+          $ref: '#/components/schemas/PatientPayload'
+        ContinueData:
+          $ref: '#/components/schemas/QueryContinueDataResp'
+    PutPatientReq:
+      type: object
+      required:
+        - Session
+        - Patient
+      properties:
+        Session:
+          $ref: '#/components/schemas/SessionIdentifier'
+        Patient:
+          $ref: '#/components/schemas/PatientPayload'
+    QueryResultSessionListResp:
+      type: object
+      required:
+        - ResultSessions
+      properties:
+        ResultSessions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResultSessionDescr'
+    QueryResultResp:
+      type: object
+      required:
+        - Results
+      properties:
+        Results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResultPayload'
+    ResultPayload:
+      type: object
+      required:
+        - ResultSessionID
+        - StartDt
+        - EndDt
+        - PauseDurationMsec
+        - ActivityApm
+        - NumTasks
+        - NumCorrectTasks
+        - CurrentLevel
+        - ModuleSpecifics
+      properties:
+        ResultSessionID:
+          type: string
+          example: >-
+            C0FEEABCEDF
+        StartDt:
+          type: string
+          example: >-
+            2025-01-27T12:41:04+2:00 (ISO8601 value including seconds and
+            timezone)
+        EndDt:
+          type: string
+          example: >-
+            2025-01-27T12:41:04+2:00 (ISO8601 value including seconds and
+            timezone)
+        PauseDurationMsec:
+          type: integer
+          minumum: 0
+          example: 4524
+        ActivityApm: 
+          type: number
+          example: 3.1242
+        NumTasks:
+          type: integer
+          minumum: 0
+          example: 6
+        NumCorrectTasks:
+          type: integer
+          minumum: 0
+          example: 4
+        CurrentLevel:
+          $ref: '#/components/schemas/SimpleLevel'
+        ModuleSpecifics:
+          $ref: '#/components/schemas/BeliebigType'
+    PostResultReq:
+      type: object
+      required:
+        - Session
+        - Result
+      properties:
+        Session:
+          $ref: '#/components/schemas/SessionIdentifier'
+        Result:
+          $ref: '#/components/schemas/ResultPayload'
+    BeliebigType: {}
+    SessionIdentifier:
+      type: object
+      required:
+        - SessionToken
+        - ClientVer
+      properties:
+        SessionToken:
+          type: string
+          example: XYZ9876543
+        ClientVer:
+          type: string
+          example: ABCD-2.6.55
+    AclDiagnosis:
+      type: object
+      required:
+        - DisInsult
+        - DisBlutung
+        - DisTurmor
+        - DisTrauma
+        - DisEnzephalitis
+        - AddNeurDysarthrie
+        - AddNeurSprechapraxie
+        - AddNeurApraxie
+        - AddNeurParese
+        - AddNeurDemenz
+      properties:
+        DisInsult:
+          type: boolean
+        DisBlutung:
+          type: boolean
+        DisTurmor:
+          type: boolean
+        DisTrauma:
+          type: boolean
+        DisEnzephalitis:
+          type: boolean
+        AddNeurDysarthrie:
+          type: boolean
+        AddNeurSprechapraxie:
+          type: boolean
+        AddNeurApraxie:
+          type: boolean
+        AddNeurParese:
+          type: boolean
+        AddNeurDemenz:
+          type: boolean
+    QueryResultReq:
+      type: object
+      required:
+        - Session
+        - ResultSessionId
+      properties:
+        ResultSessionId:
+          type: string
+          example: C0FEEABCEDF
+        Session:
+          $ref: '#/components/schemas/SessionIdentifier'
+    QueryContinueDataResp:
+      type: object
+      required:
+        - ModuleSpecifics
+      properties:
+        ModuleSpecifics:
+          $ref: '#/components/schemas/BeliebigType'
+    PostContinueDataReq:
+      type: object
+      required:
+        - Session
+        - ModuleSpecifics
+      properties:
+        Session:
+          $ref: '#/components/schemas/SessionIdentifier'
+        ModuleSpecifics:
+          $ref: '#/components/schemas/BeliebigType'
