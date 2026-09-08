@@ -306,6 +306,7 @@ components:
         - Gender
         - DateOfBirth
         - DateOfInjury
+        - IsMultilingual
       properties:
         FirstName:
           type: string
@@ -325,6 +326,8 @@ components:
           type: string
           example: >-
             2025-01-27 (ISO8601 value YYYY-MM-DD)
+        IsMultilingual:
+          type: boolean
         ExtrasAcl:
           $ref: '#/components/schemas/AclDiagnosis'
     SessionStartReq:
