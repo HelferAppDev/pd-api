@@ -170,7 +170,7 @@ paths:
     put:
       tags:
         - Result
-      summary: Override the latest module (training/screening/test) result of the given ResultSessionID. If there are no results with that ResultSessionID, then start a new result list for this ResultSessionID and append the result.
+      summary: Override the latest module (training/screening/test) result of the given ResultSessionId. If there are no results with that ResultSessionId, then start a new result list for this ResultSessionId and append the result.
       operationId: putResultLatest
       requestBody:
         content:
@@ -390,7 +390,7 @@ components:
     ResultPayload:
       type: object
       required:
-        - ResultSessionID
+        - ResultSessionId
         - StartDt
         - EndDt
         - PauseDurationMsec
@@ -400,7 +400,7 @@ components:
         - CurrentLevel
         - ModuleSpecifics
       properties:
-        ResultSessionID:
+        ResultSessionId:
           type: string
           example: >-
             C0FEEABCEDF
