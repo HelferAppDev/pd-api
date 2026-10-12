@@ -298,9 +298,31 @@ components:
           type: integer
           minumum: 0
           example: 4
+    TherapistPayload:
+      type: object
+      required:
+        - TherapistId
+        - FirstName
+        - FamilyName
+        - Gender
+      properties:
+        TherapistId:
+          type: string
+          example: ABCDEF12345
+        FirstName:
+          type: string
+          example: Jane
+        FamilyName:
+          type: string
+          example: Doe
+        Gender:
+          type: string
+          example: female
+          enum: [male, female, diverse]
     PatientPayload:
       type: object
       required:
+        - PatientId
         - FirstName
         - FamilyName
         - Gender
@@ -308,6 +330,9 @@ components:
         - DateOfInjury
         - IsMultilingual
       properties:
+        PatientId:
+          type: string
+          example: ABCDEF12345
         FirstName:
           type: string
           example: Jane
@@ -348,6 +373,7 @@ components:
         - SessionToken
         - ResultSessionId
         - Patient
+        - Therapist
       properties:
         SessionToken:
           type: string
@@ -357,6 +383,8 @@ components:
           example: C0FEEABCEDF
         Patient:
           $ref: '#/components/schemas/PatientPayload'
+        Therapist:
+          $ref: '#/components/schemas/TherapistPayload'
         ContinueData:
           $ref: '#/components/schemas/QueryContinueDataResp'
     PutPatientReq:
